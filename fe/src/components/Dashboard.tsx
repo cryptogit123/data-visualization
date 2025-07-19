@@ -253,15 +253,104 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Update the shared card styles for all chart cards
+  const sharedCardStyles = (accentColor: string) => ({
+    height: '100%',
+    minHeight: { xs: '400px', sm: '450px' },
+    backgroundColor: alpha(theme.palette.background.paper, 0.1),
+    backdropFilter: 'blur(10px)',
+    borderRadius: { xs: 2, sm: 3 },
+    border: `1px solid ${alpha(accentColor, 0.1)}`,
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: `linear-gradient(135deg, ${alpha(accentColor, 0.1)} 0%, transparent 100%)`,
+      opacity: 0,
+      transition: 'opacity 0.3s ease'
+    },
+    '&:hover': {
+      transform: { xs: 'none', sm: 'translateY(-8px) scale(1.02)' },
+      boxShadow: { xs: 'none', sm: `0 20px 40px ${alpha(theme.palette.common.black, 0.2)}` },
+      border: `1px solid ${alpha(accentColor, 0.3)}`,
+      '&:before': {
+        opacity: 1
+      }
+    }
+  });
+
+  const sharedContentStyles = {
+    flex: 1, 
+    display: 'flex', 
+    flexDirection: 'column',
+    p: { xs: 2, sm: 3 }
+  };
+
+  const sharedHeaderStyles = {
+    display: 'flex', 
+    flexDirection: { xs: 'column', sm: 'row' },
+    justifyContent: 'space-between', 
+    alignItems: { xs: 'stretch', sm: 'center' },
+    gap: { xs: 2, sm: 0 },
+    mb: 3
+  };
+
+  const sharedTitleStyles = (accentColor: string) => ({
+    fontSize: { xs: '1.1rem', sm: '1.25rem' },
+    fontWeight: 600,
+    color: theme.palette.text.primary,
+    textAlign: { xs: 'center', sm: 'left' },
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    '&:before, &:after': {
+      content: '""',
+      display: { xs: 'none', sm: 'block' },
+      height: '2px',
+      flex: 1,
+      background: `linear-gradient(90deg, ${alpha(accentColor, 0.5)}, transparent)`
+    },
+    '&:before': {
+      marginRight: 2,
+      transform: 'scaleX(-1)' // Flip the gradient for the left side
+    },
+    '&:after': {
+      marginLeft: 2
+    }
+  });
+
+  const sharedChartContainerStyles = {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform 0.3s ease',
+    transform: 'scale(0.9)',
+    '@media (min-width: 600px)': {
+      transform: 'scale(1)',
+    },
+    '&:hover': {
+      transform: { xs: 'scale(0.9)', sm: 'scale(1.02)' }
+    }
+  };
+
   return (
     <Box
       sx={{
-        p: 4,
+        p: { xs: 2, sm: 3, md: 4 },
         minHeight: "100vh",
         backgroundColor: theme.palette.background.default,
         background: `linear-gradient(135deg, 
-        ${alpha(theme.palette.primary.dark, 0.1)} 0%, 
-        ${alpha(theme.palette.background.default, 0.95)} 100%)`,
+      ${alpha(theme.palette.primary.dark, 0.1)} 0%, 
+      ${alpha(theme.palette.background.default, 0.95)} 100%)`,
         transition: "all 0.3s ease",
         animation: `${fadeIn} 0.6s ease-out`,
       }}
@@ -269,17 +358,19 @@ const Dashboard: React.FC = () => {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },  // Stack on mobile
           justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-          flexWrap: "wrap",
+          alignItems: { xs: "stretch", md: "center" },
+          mb: { xs: 3, md: 4 },
           gap: 2,
         }}
       >
         <Typography
           variant="h3"
           sx={{
+            fontSize: { xs: "1.75rem", sm: "2.25rem", md: "3rem" },  // Responsive font size
             fontWeight: 900,
+            textAlign: { xs: "center", md: "left" },  // Center on mobile
             background: `linear-gradient(45deg, 
               ${theme.palette.primary.main}, 
               ${theme.palette.secondary.main}, 
@@ -296,10 +387,18 @@ const Dashboard: React.FC = () => {
         >
           Data Visualization Dashboard
         </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box 
+          sx={{ 
+            display: "flex", 
+            flexDirection: { xs: "column", sm: "row" },  // Stack on mobile
+            gap: 2,
+            width: { xs: "100%", md: "auto" }  // Full width on mobile
+          }}
+        >
           <FormControl
+            fullWidth  // Full width on mobile
             sx={{
-              minWidth: 200,
+              minWidth: { sm: 200 },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
                 backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -309,10 +408,7 @@ const Dashboard: React.FC = () => {
                 "&:hover": {
                   backgroundColor: alpha(theme.palette.background.paper, 0.2),
                   border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-                  boxShadow: `0 0 15px ${alpha(
-                    theme.palette.primary.main,
-                    0.2
-                  )}`,
+                  boxShadow: `0 0 15px ${alpha(theme.palette.primary.main, 0.2)}`,
                 },
               },
             }}
@@ -332,8 +428,9 @@ const Dashboard: React.FC = () => {
             </Select>
           </FormControl>
           <FormControl
+            fullWidth  // Full width on mobile
             sx={{
-              minWidth: 200,
+              minWidth: { sm: 200 },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
                 backgroundColor: alpha(theme.palette.background.paper, 0.1),
@@ -343,10 +440,7 @@ const Dashboard: React.FC = () => {
                 "&:hover": {
                   backgroundColor: alpha(theme.palette.background.paper, 0.2),
                   border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-                  boxShadow: `0 0 15px ${alpha(
-                    theme.palette.primary.main,
-                    0.2
-                  )}`,
+                  boxShadow: `0 0 15px ${alpha(theme.palette.primary.main, 0.2)}`,
                 },
               },
             }}
@@ -373,72 +467,17 @@ const Dashboard: React.FC = () => {
           display: "grid",
           gridTemplateColumns: {
             xs: "1fr",
+            sm: "repeat(auto-fit, minmax(300px, 1fr))",
             md: "repeat(2, 1fr)",
           },
-          gap: 3,
+          gap: { xs: 2, sm: 3 },
         }}
       >
         {/* Customer Type Chart */}
-        <Card 
-          sx={{ 
-            height: '100%',
-            backgroundColor: alpha(theme.palette.background.paper, 0.1),
-            backdropFilter: 'blur(10px)',
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `linear-gradient(135deg, 
-                ${alpha(theme.palette.primary.main, 0.1)} 0%, 
-                transparent 100%)`,
-              opacity: 0,
-              transition: 'opacity 0.3s ease'
-            },
-            '&:hover': {
-              transform: 'translateY(-8px) scale(1.02)',
-              boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.2)}`,
-              border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-              '&:before': {
-                opacity: 1
-              }
-            }
-          }}
-        >
-          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              mb: 3 
-            }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 600,
-                  color: theme.palette.text.primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:after': {
-                    content: '""',
-                    flex: 1,
-                    height: '2px',
-                    background: `linear-gradient(90deg, 
-                      ${alpha(theme.palette.primary.main, 0.5)}, 
-                      transparent)`,
-                    marginLeft: 2
-                  }
-                }}
-              >
+        <Card sx={sharedCardStyles(theme.palette.primary.main)}>
+          <CardContent sx={sharedContentStyles}>
+            <Box sx={sharedHeaderStyles}>
+              <Typography sx={sharedTitleStyles(theme.palette.primary.main)}>
                 Customer Types Distribution
               </Typography>
               <ChartTypeSelector
@@ -446,82 +485,17 @@ const Dashboard: React.FC = () => {
                 onChange={(value) => setChartTypes(prev => ({ ...prev, customerTypes: value }))}
               />
             </Box>
-            <Box sx={{ 
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.02)'
-              }
-            }}>
+            <Box sx={sharedChartContainerStyles}>
               {renderChart(chartTypes.customerTypes, customerTypeData)}
             </Box>
           </CardContent>
         </Card>
 
         {/* Account Industry Chart */}
-        <Card 
-          sx={{ 
-            height: '100%',
-            backgroundColor: alpha(theme.palette.background.paper, 0.1),
-            backdropFilter: 'blur(10px)',
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `linear-gradient(135deg, 
-                ${alpha(theme.palette.secondary.main, 0.1)} 0%, 
-                transparent 100%)`,
-              opacity: 0,
-              transition: 'opacity 0.3s ease'
-            },
-            '&:hover': {
-              transform: 'translateY(-8px) scale(1.02)',
-              boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.2)}`,
-              border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
-              '&:before': {
-                opacity: 1
-              }
-            }
-          }}
-        >
-          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              mb: 3 
-            }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 600,
-                  color: theme.palette.text.primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:after': {
-                    content: '""',
-                    flex: 1,
-                    height: '2px',
-                    background: `linear-gradient(90deg, 
-                      ${alpha(theme.palette.secondary.main, 0.5)}, 
-                      transparent)`,
-                    marginLeft: 2
-                  }
-                }}
-              >
+        <Card sx={sharedCardStyles(theme.palette.secondary.main)}>
+          <CardContent sx={sharedContentStyles}>
+            <Box sx={sharedHeaderStyles}>
+              <Typography sx={sharedTitleStyles(theme.palette.secondary.main)}>
                 Account Industries
               </Typography>
               <ChartTypeSelector
@@ -529,82 +503,17 @@ const Dashboard: React.FC = () => {
                 onChange={(value) => setChartTypes(prev => ({ ...prev, accountIndustries: value }))}
               />
             </Box>
-            <Box sx={{ 
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.02)'
-              }
-            }}>
+            <Box sx={sharedChartContainerStyles}>
               {renderChart(chartTypes.accountIndustries, industryData)}
             </Box>
           </CardContent>
         </Card>
 
         {/* Team Chart */}
-        <Card 
-          sx={{ 
-            height: '100%',
-            backgroundColor: alpha(theme.palette.background.paper, 0.1),
-            backdropFilter: 'blur(10px)',
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `linear-gradient(135deg, 
-                ${alpha(theme.palette.success.main, 0.1)} 0%, 
-                transparent 100%)`,
-              opacity: 0,
-              transition: 'opacity 0.3s ease'
-            },
-            '&:hover': {
-              transform: 'translateY(-8px) scale(1.02)',
-              boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.2)}`,
-              border: `1px solid ${alpha(theme.palette.success.main, 0.3)}`,
-              '&:before': {
-                opacity: 1
-              }
-            }
-          }}
-        >
-          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              mb: 3 
-            }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 600,
-                  color: theme.palette.text.primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:after': {
-                    content: '""',
-                    flex: 1,
-                    height: '2px',
-                    background: `linear-gradient(90deg, 
-                      ${alpha(theme.palette.success.main, 0.5)}, 
-                      transparent)`,
-                    marginLeft: 2
-                  }
-                }}
-              >
+        <Card sx={sharedCardStyles(theme.palette.success.main)}>
+          <CardContent sx={sharedContentStyles}>
+            <Box sx={sharedHeaderStyles}>
+              <Typography sx={sharedTitleStyles(theme.palette.success.main)}>
                 Team Distribution
               </Typography>
               <ChartTypeSelector
@@ -612,82 +521,17 @@ const Dashboard: React.FC = () => {
                 onChange={(value) => setChartTypes(prev => ({ ...prev, teamDistribution: value }))}
               />
             </Box>
-            <Box sx={{ 
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.02)'
-              }
-            }}>
+            <Box sx={sharedChartContainerStyles}>
               {renderChart(chartTypes.teamDistribution, teamData)}
             </Box>
           </CardContent>
         </Card>
 
         {/* ACV Range Chart */}
-        <Card 
-          sx={{ 
-            height: '100%',
-            backgroundColor: alpha(theme.palette.background.paper, 0.1),
-            backdropFilter: 'blur(10px)',
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `linear-gradient(135deg, 
-                ${alpha(theme.palette.info.main, 0.1)} 0%, 
-                transparent 100%)`,
-              opacity: 0,
-              transition: 'opacity 0.3s ease'
-            },
-            '&:hover': {
-              transform: 'translateY(-8px) scale(1.02)',
-              boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.2)}`,
-              border: `1px solid ${alpha(theme.palette.info.main, 0.3)}`,
-              '&:before': {
-                opacity: 1
-              }
-            }
-          }}
-        >
-          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              mb: 3 
-            }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 600,
-                  color: theme.palette.text.primary,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:after': {
-                    content: '""',
-                    flex: 1,
-                    height: '2px',
-                    background: `linear-gradient(90deg, 
-                      ${alpha(theme.palette.info.main, 0.5)}, 
-                      transparent)`,
-                    marginLeft: 2
-                  }
-                }}
-              >
+        <Card sx={sharedCardStyles(theme.palette.info.main)}>
+          <CardContent sx={sharedContentStyles}>
+            <Box sx={sharedHeaderStyles}>
+              <Typography sx={sharedTitleStyles(theme.palette.info.main)}>
                 ACV Ranges
               </Typography>
               <ChartTypeSelector
@@ -695,16 +539,7 @@ const Dashboard: React.FC = () => {
                 onChange={(value) => setChartTypes(prev => ({ ...prev, acvRanges: value }))}
               />
             </Box>
-            <Box sx={{ 
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.02)'
-              }
-            }}>
+            <Box sx={sharedChartContainerStyles}>
               {renderChart(chartTypes.acvRanges, acvData)}
             </Box>
           </CardContent>

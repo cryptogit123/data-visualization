@@ -30,19 +30,34 @@ const ChartTypeSelector: React.FC<ChartTypeSelectorProps> = ({
   return (
     <FormControl 
       size="small"
+      fullWidth  // Full width on mobile
       sx={{ 
-        minWidth: 120,
+        minWidth: { xs: '100%', sm: 120 },  // Full width on mobile, fixed width on tablet and up
+        maxWidth: { xs: '100%', sm: 200 },  // Limit maximum width
         '& .MuiOutlinedInput-root': {
           borderRadius: 2,
           backgroundColor: alpha(theme.palette.background.paper, 0.1),
           backdropFilter: 'blur(10px)',
           border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
           transition: 'all 0.3s ease',
+          fontSize: { xs: '0.875rem', sm: '1rem' },  // Smaller font on mobile
+          '& .MuiSelect-select': {
+            padding: { xs: '0.5rem', sm: '0.75rem' },  // Smaller padding on mobile
+          },
           '&:hover': {
             backgroundColor: alpha(theme.palette.background.paper, 0.2),
             border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-            boxShadow: `0 0 15px ${alpha(theme.palette.primary.main, 0.2)}`
+            boxShadow: { 
+              xs: 'none',  // No shadow on mobile
+              sm: `0 0 15px ${alpha(theme.palette.primary.main, 0.2)}`
+            }
           }
+        },
+        '& .MuiInputLabel-root': {
+          fontSize: { xs: '0.875rem', sm: '1rem' }  // Smaller label on mobile
+        },
+        '& .MuiMenuItem-root': {
+          fontSize: { xs: '0.875rem', sm: '1rem' }  // Smaller menu items on mobile
         }
       }}
     >

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as d3 from 'd3';
 import { useTheme, Box } from '@mui/material';
@@ -77,10 +78,6 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({
       .outerRadius(radius * 1.05)
       .cornerRadius(4);
 
-    const labelArc = d3.arc<d3.PieArcDatum<{ label: string; value: number }>>()
-      .innerRadius(radius * 0.8)
-      .outerRadius(radius * 0.8);
-
     // Create SVG
     const svg = d3.select(svgRef.current)
       .append('g')
@@ -133,15 +130,6 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({
           .attr('d', () => hoverArc(data))
           .style('filter', 'drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2))');
 
-        // Get segment position
-        const centroid = arc.centroid(data);
-        const [cx, cy] = centroid;
-        const svgBox = svgRef.current?.getBoundingClientRect() || new DOMRect();
-        
-        // Calculate position in viewport coordinates
-        const tooltipX = svgBox.left + width/2 + cx;
-        const tooltipY = svgBox.top + height/2 + cy;
-
         tooltip
           .style('visibility', 'visible')
           .html(`
@@ -150,35 +138,16 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({
             <div style="color: ${theme.palette.text.secondary}">Percentage: ${percentage}%</div>
           `);
 
-        // Position tooltip near the segment
-        const tooltipWidth = tooltipRef.current?.offsetWidth || 0;
-        const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
-
-        tooltip
-          .style('left', `${tooltipX - tooltipWidth/2}px`)
-          .style('top', `${tooltipY - tooltipHeight - 10}px`);
-      })
-      .on('mousemove', function(event: MouseEvent) {
         const tooltipWidth = tooltipRef.current?.offsetWidth || 0;
         const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-
-        const tooltipX = mouseX + tooltipWidth > windowWidth 
-          ? mouseX - tooltipWidth - 10 
-          : mouseX + 10;
-        
-        const tooltipY = mouseY + tooltipHeight > windowHeight
-          ? mouseY - tooltipHeight - 10
-          : mouseY + 10;
 
         tooltip
-          .style('left', `${tooltipX}px`)
-          .style('top', `${tooltipY}px`);
+          .style('left', `${mouseX - tooltipWidth/2}px`)
+          .style('top', `${mouseY - tooltipHeight - 10}px`);
       })
-      .on('mouseout', function(event: MouseEvent, d: d3.PieArcDatum<{ label: string; value: number }>) {
+      .on('mouseout', function(event: MouseEvent, d) {
         const data = d as d3.PieArcDatum<{ label: string; value: number }>;
         d3.select(this)
           .transition()
@@ -188,36 +157,6 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({
 
         tooltip.style('visibility', 'hidden');
       });
-
-    // Add initial animation
-    slices.transition()
-      .duration(1000)
-      .attrTween('d', function(d) {
-        const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
-        return function(t) {
-          return arc(interpolate(t) as d3.PieArcDatum<{ label: string; value: number }>) || '';
-        };
-      });
-
-    // Add labels with animations
-    const labels = svg.selectAll('text')
-      .data(pie(data))
-      .enter()
-      .append('text')
-      .attr('transform', d => `translate(${labelArc.centroid(d)})`)
-      .attr('dy', '0.35em')
-      .attr('text-anchor', 'middle')
-      .style('fill', theme.palette.text.primary)
-      .style('font-size', '12px')
-      .style('font-weight', '500')
-      .style('opacity', 0)
-      .text(d => d.data.label);
-
-    // Animate labels
-    labels.transition()
-      .delay(1000) // Wait for pie animation
-      .duration(500)
-      .style('opacity', 1);
 
     // Add center text
     svg.append('text')
@@ -239,12 +178,25 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({
   }, [data, width, height, margin, theme, colorPalette, colors]);
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box 
+      sx={{ 
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
       <svg
         ref={svgRef}
         width={width}
         height={height}
-        style={{ maxWidth: '100%' }}
+        style={{ 
+          maxWidth: '100%',
+          height: 'auto',
+          display: 'block'
+        }}
       />
       <div ref={tooltipRef} />
     </Box>

@@ -29,18 +29,23 @@ const ChartSkeleton: React.FC = () => {
   );
 
   return (
-    <Box sx={{ height: '100%', p: 2 }}>
+    <Box sx={{ 
+      height: '100%', 
+      p: { xs: 1.5, sm: 2 }  // Less padding on mobile
+    }}>
       {/* Chart Title Skeleton */}
       <Box sx={{ 
         display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },  // Stack on mobile
         justifyContent: 'space-between',
-        alignItems: 'center',
-        mb: 3
+        alignItems: { xs: 'stretch', sm: 'center' },
+        gap: { xs: 2, sm: 0 },  // Add gap when stacked
+        mb: { xs: 2, sm: 3 }  // Less margin on mobile
       }}>
         <Box
           sx={{
-            width: '200px',
-            height: '28px',
+            width: { xs: '100%', sm: '200px' },  // Full width on mobile
+            height: { xs: '24px', sm: '28px' },  // Smaller height on mobile
             borderRadius: 1,
             backgroundColor: baseColor,
             position: 'relative',
@@ -60,8 +65,8 @@ const ChartSkeleton: React.FC = () => {
         />
         <Box
           sx={{
-            width: '120px',
-            height: '32px',
+            width: { xs: '100%', sm: '120px' },  // Full width on mobile
+            height: { xs: '28px', sm: '32px' },  // Smaller height on mobile
             borderRadius: 1,
             backgroundColor: baseColor,
             position: 'relative',
@@ -84,8 +89,8 @@ const ChartSkeleton: React.FC = () => {
       {/* Chart Area Skeleton */}
       <Box
         sx={{
-          height: 400,
-          borderRadius: 2,
+          height: { xs: 300, sm: 400 },  // Smaller height on mobile
+          borderRadius: { xs: 1.5, sm: 2 },  // Smaller radius on mobile
           backgroundColor: baseColor,
           position: 'relative',
           overflow: 'hidden',
@@ -108,15 +113,15 @@ const ChartSkeleton: React.FC = () => {
           height: '100%',
           alignItems: 'flex-end',
           justifyContent: 'space-around',
-          p: 4
+          p: { xs: 2, sm: 4 }  // Less padding on mobile
         }}>
           {[...Array(6)].map((_, index) => (
             <Box
               key={index}
               sx={{
-                width: '40px',
+                width: { xs: '20px', sm: '40px' },  // Smaller bars on mobile
                 height: `${Math.random() * 60 + 20}%`,
-                borderRadius: 1,
+                borderRadius: { xs: 0.5, sm: 1 },  // Smaller radius on mobile
                 backgroundColor: alpha(theme.palette.grey[700], 0.3),
                 position: 'relative',
                 overflow: 'hidden',
