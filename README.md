@@ -7,10 +7,11 @@ A full-stack application with a separate frontend (`fe/`) and backend (`be/`) bu
 ---
 
 ## 📁 Project Structure
+```
 data-visualization/
 ├── fe/   # Frontend code (React)
 └── be/   # Backend code (Node/Express)
-
+```
 ---
 
 ## 🚀 Getting Started
